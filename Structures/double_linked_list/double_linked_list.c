@@ -1,35 +1,26 @@
 #include <stdlib.h>
-#include<string.h>
+#include <string.h>
 #include <stdbool.h>
 
-struct doubleLinkedNode {
-    struct doubleLinkedNode *next;
-    struct doubleLinkedNode *prev;
-    char *value;
-};
+#include "double_linked_list.h"
 
-struct doubleLinkedList {
-    struct doubleLinkedNode *start;
-    struct doubleLinkedNode *end;
-};
-
-void TraverseForwardDoubleLinkedNode(struct doubleLinkedNode** node) 
+void DoubleLinkedNodeTraverseForward(struct node** node) 
 {
     if (*node != NULL) {
         *node = (*node)->next;
     }
 }
 
-void TraverseBackwardsDoubleLinkedNode(struct doubleLinkedNode** node) 
+void DoubleLinkedNodeTraverseBackwards(struct node** node) 
 {
     if (*node != NULL) {
         *node = (*node)->prev;
     }
 }
 
-struct doubleLinkedNode* CreateDoubleLinkedNode(char* string) 
+struct node* DoubleLinkedNodeCreate(char* string) 
 {
-    struct doubleLinkedNode *node = (struct doubleLinkedNode*) malloc(sizeof(struct doubleLinkedNode));
+    struct node *node = (struct node*) malloc(sizeof(struct node));
     node->next = NULL;
     node->prev = NULL;
 
@@ -44,23 +35,23 @@ struct doubleLinkedNode* CreateDoubleLinkedNode(char* string)
     return node;
 }
 
-void LinkDoubleLinkedNodes(struct doubleLinkedNode* start, struct doubleLinkedNode* end) 
+void DoubleLinkedNodesLink(struct node* start, struct node* end) 
 {
     start->next = end;
     end->prev = start;
 }
 
 
-struct doubleLinkedList* CreateDoubleLinkedList(struct doubleLinkedNode* start) 
+struct doubleLinkedList* DoubleLinkedListCreate(struct node* start) 
 {
     struct doubleLinkedList *list = (struct doubleLinkedList*) malloc(sizeof(struct doubleLinkedList));
-    struct doubleLinkedNode *current = start;
+    struct node *current = start;
 
     list->start = current;
     // Traversal approach to finding the end of the list, problematic for cyclic lists
     // Solution -> don't do cyclic lists here xd
     while (current->next != NULL) {
-        TraverseForwardDoubleLinkedNode(&current);
+        DoubleLinkedNodeTraverseForward(&current);
     }
 
     list->end = current;
@@ -68,18 +59,18 @@ struct doubleLinkedList* CreateDoubleLinkedList(struct doubleLinkedNode* start)
     return list;
 }
 
-struct doubleLinkedNode* FindValueInDoubleLinkedList(struct doubleLinkedList* list, char* value, bool useBackwardsTraversal) 
+struct node* DoubleLinkedListFindValue(struct doubleLinkedList* list, char* value, bool useBackwardsTraversal) 
 {
-    void (*TraversalMethod)(struct doubleLinkedNode**);
-    struct doubleLinkedNode *current;
+    void (*TraversalMethod)(struct node**);
+    struct node *current;
 
     if (useBackwardsTraversal) 
     {
-        TraversalMethod = TraverseBackwardsDoubleLinkedNode;
+        TraversalMethod = DoubleLinkedNodeTraverseBackwards;
         current = list->end;
     }
     else {
-        TraversalMethod = TraverseForwardDoubleLinkedNode;
+        TraversalMethod = DoubleLinkedNodeTraverseForward;
         current = list->start;
     }
 
@@ -95,7 +86,7 @@ struct doubleLinkedNode* FindValueInDoubleLinkedList(struct doubleLinkedList* li
     return current;
 }
 
-void RemoveNodeFromDoubleLinkedList(struct doubleLinkedList* list, struct doubleLinkedNode* node)
+void DoubleLinkedListRemoveNode(struct doubleLinkedList* list, struct node* node)
 {
     if (node->prev == NULL) {
         list->start = node->next;
@@ -113,7 +104,7 @@ void RemoveNodeFromDoubleLinkedList(struct doubleLinkedList* list, struct double
 
 }
 
-void InsertNodeAfter(struct doubleLinkedList* list, struct doubleLinkedNode* node, struct doubleLinkedNode* newNode) 
+void DoubleLinkedListInsertNodeAfter(struct doubleLinkedList* list, struct node* node, struct node* newNode) 
 {
     newNode->prev = node;
     if (node->next == NULL){
@@ -127,7 +118,7 @@ void InsertNodeAfter(struct doubleLinkedList* list, struct doubleLinkedNode* nod
     node->next = newNode;
 }
 
-void InsertNodeBefore(struct doubleLinkedList* list, struct doubleLinkedNode* node, struct doubleLinkedNode* newNode) 
+void DoubleLinkedListInsertNodeBefore(struct doubleLinkedList* list, struct node* node, struct node* newNode) 
 {
     newNode->next = node;
     if (node->prev == NULL){
@@ -141,7 +132,7 @@ void InsertNodeBefore(struct doubleLinkedList* list, struct doubleLinkedNode* no
     node->prev = newNode;
 }
 
-void InsertAtStart(struct doubleLinkedList* list, struct doubleLinkedNode* node)
+void DoubleLinkedListInsertAtStart(struct doubleLinkedList* list, struct node* node)
 {
     if (list->start == NULL){
         list->start = node;
@@ -150,16 +141,16 @@ void InsertAtStart(struct doubleLinkedList* list, struct doubleLinkedNode* node)
         node->prev = NULL;
     }
     else {
-        InsertNodeBefore(list, list->start, node);
+        DoubleLinkedListInsertNodeBefore(list, list->start, node);
     }
 }
 
-void InsertAtEnd(struct doubleLinkedList* list, struct doubleLinkedNode* node)
+void DoubleLinkedListInsertAtEnd(struct doubleLinkedList* list, struct node* node)
 {
     if (list->end == NULL){
-        InsertAtStart(list, node);
+        DoubleLinkedListInsertAtStart(list, node);
     }
     else{
-        InsertNodeAfter(list, list->end, node);
+        DoubleLinkedListInsertNodeAfter(list, list->end, node);
     }
 }
